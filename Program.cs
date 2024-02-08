@@ -18,14 +18,14 @@ builder.Services.AddSingleton<EncryptionService>();
 
 var app = builder.Build();
 
-// Aktivera middleware för att betjäna Swagger som JSON-endpoint och Swagger UI
+// Aktivera middleware för Swagger som JSON-endpoint och Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 });
 
-// Definiera dina endpoints här
+// Skapar endpoints här
 app.MapPost("/encrypt", (EncryptionService encryptionService, string plaintext) =>
 {
     return Results.Ok(new { encryptedText = encryptionService.Encrypt(plaintext) });
@@ -38,32 +38,34 @@ app.MapPost("/decrypt", (EncryptionService encryptionService, string encryptedTe
 
 app.Run();
 
+// Ord som ska krypteras
 public class EncryptionService
 {
     private readonly string[] summaries = new[]
     {
         "mascara", "lipgloss", "bronzer", "blush", "consealer", "foundation"
     };
-
+ // ifall annat ord än de angivna skrivs för kryptering, felmeddelande utmatas
     public string Encrypt(string plaintext)
     {
         if (!summaries.Contains(plaintext, StringComparer.OrdinalIgnoreCase))
         {
-            return "Unauthorized word";
+            return "Wrong word, try again!";
         }
 
         byte[] textAsBytes = Encoding.UTF8.GetBytes(plaintext);
         return Convert.ToBase64String(textAsBytes);
     }
-
+ 
     public string Decrypt(string encryptedText)
     {
         byte[] textAsBytes = Convert.FromBase64String(encryptedText);
         string decodedText = Encoding.UTF8.GetString(textAsBytes);
-
+        
+// ifall annat ord än de angivna skrivs för avkryptering, felmeddelande utmatas
         if (!summaries.Contains(decodedText, StringComparer.OrdinalIgnoreCase))
         {
-            return "Unauthorized word";
+            return "Wrong word, try again!";
         }
 
         return decodedText;
