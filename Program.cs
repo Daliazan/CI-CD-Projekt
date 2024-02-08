@@ -18,14 +18,14 @@ builder.Services.AddSingleton<EncryptionService>();
 
 var app = builder.Build();
 
-// Aktivera middleware för Swagger som JSON-endpoint och Swagger UI
+// skapar middleware för Swagger (JSON-endpoint och Swagger UI)
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 });
 
-// Skapar endpoints här
+// Skapar endpoints 
 app.MapPost("/encrypt", (EncryptionService encryptionService, string plaintext) =>
 {
     return Results.Ok(new { encryptedText = encryptionService.Encrypt(plaintext) });
@@ -38,7 +38,7 @@ app.MapPost("/decrypt", (EncryptionService encryptionService, string encryptedTe
 
 app.Run();
 
-// Ord som ska krypteras
+// Ord/produkter som ska krypteras
 public class EncryptionService
 {
     private readonly string[] summaries = new[]
